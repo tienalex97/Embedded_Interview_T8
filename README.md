@@ -31,7 +31,7 @@ int main()
   printf("So nguyen la: %d\n", n);
 }
 ```
-### Fucntions
+### Fucntions:
 - Functions are a group of statements used to perform cerion actions, and they are important for reusing code.
 #### Ví dụ:
 ```c
@@ -51,7 +51,7 @@ int main(){
 
 ### Loops:
 
-#### - For loop
+#### - For loop:
 - When you know exactly how many times you want to loop through your code, use the `for` loop insted of a `while` loop.
 ```c
 for (khởi tạo giá trị biến lặp; điều kiện lặp; cập nhật biến sau mỗi vòng lặp)
@@ -59,7 +59,7 @@ for (khởi tạo giá trị biến lặp; điều kiện lặp; cập nhật bi
 	// Statements
 }
 ```
-#### - While loop
+#### - While loop:
 - Loops can execut a block of code as long as a specifed condition is reached.
 ```c
 while(condition)
@@ -67,7 +67,7 @@ while(condition)
 	// code block
 }
 ```
-#### - Do...While loop
+#### - Do...While loop:
 - Do...while loop is similar to a while loop, except the fact that it is guaranteed to execute at least one time.
 ```c
 do
@@ -75,6 +75,67 @@ do
 	// code block
 } while(condition)
 ```
+### Conditional branching:
+	It is also called as `branching` as a program decides which statement to excecute based on the result of the evaluated condition. 
+ #### If...else statement:
+ - If statement is used to specify  block of code to be executed if a condition is `true`.
+ - Else statement is used to specify a block of code to be executed if a condition is `false`.
+ - Read more about `If - Elseif - Else`.
+ #### Enum & Switch case:
+ - Enum(enumeration) is used to assigned names to integral constants, the names make a programe `easy to read and maintain`.
+   - Khai báo:
+     ```
+     enum _varname { A, B, C};
+     ```
+     ##### Ví dụ:
+     ```c
+     enum days_of_week { MON=0, TUE, WED, THU, FRI, SAT, SUN};
+     ```
+   - Khởi tạo:
+     ```
+     enum _varname _objetname;
+     ```
+     ##### Ví dụ:
+     ```c
+     enum days_of_week day = MON;
+     ```
+- Switch case : Selects one of many code blocks to be executed insted of many `if...else`
+  - Syntax
+  ```c
+  switch(expression) {
+  case x:
+    // code block
+    break;
+  case y:
+    // code block
+    break;
+  default:
+    // code block
+	}
+  ```
+  - Ví dụ:
+  ```c
+  switch(day)
+  {
+	case MON:
+		// code block
+		break;
+	case TUE:
+		// code block
+		break;
+	default:
+		// code block
+  }
+  ```
+  
+ 
+	
+
+
+
+
+
+
 
 </details>
 
