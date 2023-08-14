@@ -1,8 +1,10 @@
 # Embedded_Interview_T8
 ## C PROGRAMMING LANGUAGE
+<details>
+	
 <summary>C cơ bản </summary>
 
-### Thư viện <stdint.h>
+### Data types
 - Một số datatype thông dụng:
     | Name | Type | Range |
   |:------:|:--------:|:--------:|
@@ -29,3 +31,70 @@ int main()
   printf("So nguyen la: %d\n", n);
 }
 ```
+### Fucntions
+- Functions are a group of statements used to perform cerion actions, and they are important for reusing code.
+#### Ví dụ:
+```c
+#include <stdio.h>
+void tich(int a, int b){  //Đây là hàm tich()
+    printf("Tich %d va %d la %d",a, b, a*b);
+}
+int tong(int c, int d){ //Hàm này có kiểu trả về là int
+    return c+d;
+}
+int main(){
+    tich(2,3); // tich 2 va 3 la 6
+    printf("Tong c va d la %d",tong(4,5)); //Tong c va d la 9
+    return 0;
+}
+```
+
+### Loops:
+
+#### - For loop
+- When you know exactly how many times you want to loop through your code, use the `for` loop insted of a `while` loop.
+```c
+for (khởi tạo giá trị biến lặp; điều kiện lặp; cập nhật biến sau mỗi vòng lặp)
+{
+	// Statements
+}
+```
+#### - While loop
+- Loops can execut a block of code as long as a specifed condition is reached.
+```c
+while(condition)
+{
+	// code block
+}
+```
+#### - Do...While loop
+- Do...while loop is similar to a while loop, except the fact that it is guaranteed to execute at least one time.
+```c
+do
+{
+	// code block
+} while(condition)
+```
+
+</details>
+
+<details>
+<summary>POINTERS</summary>
+</details>
+<details>
+<summary>MEMORY ZONES</summary>
+</details>
+<details>
+<summary>VARIABLES</summary>
+</details>
+<details>
+<summary>COMPILER</summary>
+</details>
+<details>
+<summary>MACROS</summary>
+</details>
+
+
+
+
+
