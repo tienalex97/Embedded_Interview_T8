@@ -390,6 +390,241 @@ Calloc giống với malloc nhưng có 2 diểm khác biệt:
 </details>
 <details>
 <summary>VARIABLES</summary>
+	
+- Biến là một vùng bộ nhớ được đặt tên cho phép dễ dàng lưu trữ và truy xuất dữ liệu. Tùy vào loại kiểu dữ kiệu của biến mà kích thước vùng nhớ này khác nhau. Ví dụ:
+	```c
+	uint32_t= 0; // 4 bytes
+	char c= 's'; // 1 byte
+	```
+<h3 align="center"> >>>There are several varible types<<<</h3>
+<br>
+	
+### 1. Local variable
+- Khởi tạo tại STACK
+- Bị hủy giá trị khi thoát ra khỏi local scope. Ví dụ:
+	```c
+	#include <stdio.h>
+	void	foo(void)
+	{
+		int	a;
+		a = 10;
+		printf("Foo function: Variable a = %d\n", a);
+	} // the variable 'a' ceases to exist in RAM here.
+	int	main(void)
+	{
+		foo();
+		printf("Main: Variable a = %d\n", a);
+		// ERROR : main does not know any variable named 'a'!
+		return (0);
+	}
+	```
+- Tuy nhiên, ta vẫn có cách để thay đổi giá trị của biến local từ bên ngoài bằng cách truyền địa chỉ vùng nhớ của nó làm tham số và truy cập vào địa chỉ để thay đổi.
+	```c
+	#include <stdio.h>
+	void	foo(int *a)
+	{
+		*a = 145; // Change what is at the address of 'a'
+		printf("Foo: Variable a = %d\n", *a); // *a == 145
+	}
+	int	main(void)
+	{
+		int a;
+		a = 10;
+		printf("Main: Variable a = %d\n", a); // a == 10
+		foo(&a); // Pass the address of 'a', not the value
+		printf("Main: Variable a = %d\n", a); // a == 145
+		return (0);
+	}
+	```
+### 2. Global variable - extern keyword
+- Khởi tạo trong vùng nhớ DATA hoặc BSS
+- Khởi tạo bằng cách khai báo nó ngoài phạm vi của bất kì hàm nào. Điều này có nghĩa là nó có thể được truy cập trong phạm vi của bất kỳ hàm nào.
+#### Thứ tự ưu tiên của global>local
+  - Khi khai báo hai biến cùng tên với kiểu global và local, thứ tự ưu tiên sẽ khác nhau. Ví dụ:
+  ```c
+ 	#include <stdio.h>
+	int	a; // Global variable initialized to 0 by default
+	void	foo(void)
+	{
+		a = 42;
+		printf("Foo: a = %d\n", a); // a == 42
+	}
+	void	global_a(void)
+	{
+		// Prints the value of the global variable
+		printf("-------------- GLOBAL A: a = %d\n", a);
+	}
+	int	main(void)
+	{
+		int a; // Local variable with the same name as the global
+		a = 100;
+		global_a(); // a globale == 0
+		printf("Main: a = %d\n", a); // a locale == 100
+		foo();
+		printf("Main: a = %d\n", a); // a locale == 100
+		global_a(); // a globale == 42
+		a = 200;
+		printf("Main: a = %d\n", a); // a locale == 200
+		global_a(); // a globale == 42
+		return (0);
+	}
+```
+
+#### Phạm vi của biến global - extern keyword
+- Bất kỳ hàm nào của chương trình đều có thể truy cập vào biến global. Nếu chúng ta muốn sử dụng biến này ở trong một file khác thì chỉ việc thêm keyword `extern` vào trước và reinitialize nó.
+- Tuy nhiên, việc truy cập từ bất kỳ đâu có thể dẫn tới vấn đề bảo mật. Khi đó ta sẽ cần sử dụng `static global variable`.
+- Ví dụ:
+  Trong file lib.c
+  ```c
+	#include <stdio.h>
+	
+	int	a = 100; // Global variable declared and defined here
+	
+	void	foo(void)
+	{
+		a = 42;
+		printf("Foo: a = %d\n", a); // a == 42
+	}
+  ```
+  Trong file main.c
+  	```c
+  	#include <stdio.h>
+
+	extern int	a; // Global variable, defined elsewhere
+	
+	void foo(void);	// Foo prototype, defined elsewhere
+			// is identical to
+			// extern void foo(void);
+	
+	int	main(void)
+	{
+		printf("Main: a = %d\n", a); // a == 100
+		foo();
+		printf("Main: a = %d\n", a); // a == 42
+		a = 200;
+		printf("Main: a = %d\n", a); // a == 200
+		return (0);
+	}
+  ```
+- Terminal sẽ in ra như sau:
+  	```c
+	Main: a = 100
+	Foo: a = 42
+	Main: a = 42
+	Main: a = 200
+  ```
+  <h3 align= "center" col="red"> ***Lưu ý: Khi compile phải liệt kê đầy đủ các file liên quan thì mới nhận được biến extern. `c gcc main.c lib.c -o main`</h3>
+
+### 3. Local static
+- Khởi tạo trong BSS/DATA.
+- Biến này thực chất chả giống gì biến local. Nó tồn tại như biến global, không mất đi khi thoát khỏi scope và được khởi tạo giá trị mặc định là 0.
+- Tuy nhiên từ khóa static hạn chế phạm vi của nó thuộc về hàm chứa nó.
+- - Ví dụ:
+  ```c
+	#include <stdio.h>
+	void	foo(void)
+	{
+		int		a = 100;
+		static int	b = 100;
+		printf("a = %d, b = %d\n", a, b);
+		a++;
+		b++;
+	}
+	int	main(void)
+	{
+		foo();
+		foo();
+		foo();
+		foo();
+		foo();
+		return (0);
+	}
+```
+- Lúc này, ta thấy rõ sự khác biệt.
+	```c
+	a = 100, b = 100
+	a = 100, b = 101
+	a = 100, b = 102
+	a = 100, b = 103
+	a = 100, b = 104
+```
+### 4. Global static
+- Được khởi tạo tại DATA hoặc BSS
+- Biến này chỉ được sử dụng trong phạm vi file.c chứa nó mà thôi, không thể truy cập từ file.c khác kể cả dùng extern.
+- Nếu trong file đó có hàm sử dụng biến này, ta vẫn có thể gọi hàm đó sang file khác băng extern keyword. Điều này được ứng dụng trong ` thiết kế thư viện `, chỉ cho phép người dùng sử dụng tính năng chứ không được phép truy cập thay đổi giá trị của biến.
+- Ứng dụng: Dùng để thiết kế thư viện.
+	- Trong file main.c
+   ```c
+	#include <stdio.h>
+	
+	extern void test(); //extern sử dụng để lấy dữ liệu từ file test.c
+	
+	extern int a;
+	// Lỗi vì không thể lấy biến a từ test.c do static toàn cục.Nếu trong test.c thay static int a = 1 thành int a = 1 thì chương trình đúng.
+	int main(){
+	    test(); // a = 1
+	    a = 10  // a = 10
+	    test(); // a = 11
+	    return 0;
+	}
+```
+	- Trong file lib.c
+	```c
+	#include <stdio.h>
+	
+	static int a = 1; //Static toàn cục -> DATA
+	//int a=1;
+	void test(){
+	    printf("a=%d\n", a); 
+	    a++;
+	}
+```
+### 5. Register variables
+- Khai báo trực tiếp trong thanh ghi register của CPU instead of RAM. Nó sẽ được truy xuất trực tiếp vào ALU từ register nên tốc độ xử lý rất nhanh.
+- Ở một số máy tính có RAM xịn và tối ưu hệ thống thì tốc độ cũng khá cao nhưng vấn kém kiểu khai báo này .
+- Ứng dụng: Viết firmware cho CPU.
+- Ví dụ:
+```c
+	#include"stdio.h"
+	#include"time.h"
+	
+	int main()
+	{
+	    clock_t start, end;
+	    double test=0;
+	    register int a;
+	    start= clock();
+	    for(int i=0; i<0xFFFFFFFF; i++)
+	    {}
+	    end= clock();
+	    test= ((double)(end-start))/CLOCKS_PER_SEC;
+	    printf("time    : %f\n", test);
+	
+	
+	}
+```
+### Volatile varibale
+- Khi compiler biên dịch chương trình, nó thấy các biến lặp lại giá trị qua các vòng lặp nó sẽ tự động tối ưu để tiết kiệm bộ nhớ.
+	```c
+	int a;
+	while(1)
+	{
+	a=1;
+	}
+	```
+ - Nhưng khi giá trị của biến thay đổi qua các vòng lặp, nó sẽ không hiểu được. Vì vậy khai báo biến sử dụng keyword volatile, nó sẽ thông báo cho compiler biết biến này có thể thay đổi giá trị bất cứ lúc nào sau các vòng lặp để tránh bị nó tối ưu.
+	```c
+	volatile int a; // ko toi uu
+	while(1)
+	{
+	a= readUSB(); // tai moi vong lap a nhan gia tri khac nhau.
+	}
+	```
+ - Ứng dụng: Interrupt, RTOS...
+
+
+
+
 </details>
 <details>
 <summary>COMPILER</summary>
