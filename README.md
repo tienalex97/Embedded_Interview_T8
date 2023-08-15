@@ -278,6 +278,115 @@ int main() {
 </details>
 <details>
 <summary>MEMORY ZONES</summary>
+<h3  align="center">
+STACK<br>
+___________<br>
+^^^^^^<br>
+^^^^^^<br>
+
+^^^^^^<br>
+HEAP<br>
+___________<br>
+BSS<br>
+___________<br>
+DATA<br>
+___________<br>
+TEXT<br>
+</h3>
+
+### 1. TEXT(READ ONLY)
+- Read only
+- Chứa khai báo hằng số. 
+### 2. DATA - Initialized data
+- Chứa biến global, static với giá trị khởi tạo khác 0
+- Giải phóng sau khi kết thúc chương trình.
+`c int a= 0;`
+### 3. BSS - Uinitialized data
+- Chứ biến global, static với giá trị khởi tạo bằng 0 hoặc chưa khởi tạo.
+`c int a;`
+- Giải  phóng sau khi kết thúc chương trình.
+- Sau khi khởi tạo giá trị khác 0 cho nó. biến này vẫn thuộc vùng BSS***
+### 4. STACK
+- R/W nhanh hơn, được khởi tạo khi compiling.
+- Vùng nhớ có kích thước cố định, phụ thuộc vào kiến trúc OS.
+- Chứa biến local, input parameters
+- Giải phóng sau khi go out of scope.
+- Lỗi stack overflow : Khi khởi tạo quá nhiều local variables hoặc đệ quy vô tận.
+```c
+int foo(int x)
+{
+	printf("de quy khong gioi han\n");
+	return foo(x);
+}
+```
+### 5. HEAP
+- Kích thước có thể thay đổi.
+- Chứa các biến global khi sử dụng dynamically allocation như malloc, realloc, calloc...
+- Tồn tại hết chương trình. Chỉ giải phóng khi gọi hàm free(); `It may cause memory leak`
+- Nếu cấp phát động quá nhiều mà không giải phóng sẽ bị `heap overflow`
+- Nếu khởi vùng nhớ quá lớn mà heap không thể lưu trữ 1 lần được cũng sẽ bị lỗi:
+```c
+int *A = (int *)malloc(sizeof(int)*18446744073709551615); // Khỏi tạo mảng động có kích thước quá lớn.
+```
+
+### ARRAY
+- Mảng dùng để lưu trữ nhiều giá trị vào một biến thay vì phải tạo nhiều biến riêng lẻ cho từng giá trị một.
+- Cú pháp:
+`c typedata name_array[] = {};
+- Ví dụ:
+```c
+uint8_t arr[]= {1,2,3,4,5};
+void *ptr[]={};
+```
+- Gía trị của mảng chính là địa chỉ của ô nhớ ddauf tiên. Ta có thể di chuyển điến địa chỉ của biến thứ 2 bằng cách (arr+1)
+```c
+uint8_t arr[5]= {1,2,3,4,5};
+    uint32_t arr1[2]= {6,7};
+    for(int i=0; i<5; i++)
+        printf("Dia chi cac phan tu cua arr lan luot la: %p\n", arr+i);
+    printf("==============\n");
+    for(int i=0; i<2; i++)
+        printf("Dia chi cac phan tu cua arr1 lan luot la: %p\n", arr1+i);
+/*
+Dia chi thu 0 cua arr la: 0000002e3fbff893
+Dia chi thu 1 cua arr la: 0000002e3fbff894
+Dia chi thu 2 cua arr la: 0000002e3fbff895
+Dia chi thu 3 cua arr la: 0000002e3fbff896
+Dia chi thu 4 cua arr la: 0000002e3fbff897
+==============
+Dia chi thu 0 cua arr1 la: 0000002e3fbff888
+Dia chi thu 1 cua arr1 la: 0000002e3fbff88c
+*/
+```
+
+### Dynamically Allocation
+- Khởi tạo mảng mà kích thước của nó có thể thay đổi trong quá trình chương trình đang chạy (runtime).
+#### 1. malloc() or memory allocation
+- Khởi tạo động một mảng động với kích thước chỉ định.
+```c
+datatype *arr_name= (casttype*)malloc(sizeof(datatype)*n);
+```
+#### 2. calloc() or contiguos allocation
+Calloc giống với malloc nhưng có 2 diểm khác biệt:
+ - Nó khởi tạo giá trị mặc định là 0.
+ - Cú pháp truyền vào 2 thông số : kích thước mảng và kích thước của kiểu dữ liệu
+ ```c
+ datatype *arr_name= (casttype*)calloc(n, sizeof(datatype));
+```
+#### 3. free() - deallocate the memory
+- Dùng để thu hồi vùng nhớ. Avoid memory leaks.
+  ```c
+  int *arr= (int*)malloc(n*sizedof(int));
+  free(ptr);
+  ```
+#### 4. realloc() or re-allocation
+- Dùng để thay đổi kích thước của mảng động
+- Ví dụ:
+  ```c
+  int *arr= (int*)malloc(n*sizedof(int));
+  arr= realloc(arr, m*sizeof(int));
+  ```
+
 </details>
 <details>
 <summary>VARIABLES</summary>
