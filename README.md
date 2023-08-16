@@ -670,7 +670,106 @@ gcc main.o -o main
 ```
 </details>
 <details>
-<summary>MACROS</summary>
+<summary>MACROS_INLINE_FUNCTION</summary>
+
+### Inline function
+- Được xử lý bởi compiler.
+- Được khai báo với từ khóa inline.
+- Khi compiler thấy bất kỳ chỗ nào xuất hiện inline function, nó sẽ thay thế chỗ đó bởi định nghĩa của hàm đã được compile tương ứng.
+### Normal Function
+- Khi hàm được gọi, compiler sẽ phải luwu con trỏ chương trình PC(programm counter) hiện tại vào stac; chuyển PC tới hàm được gọi, thực hiện hàm đó xong và lấy kết quả trả về; sau đó quay lại vị trí ban đầu trong stack trước khi gọi hàm và tiếp tục chương trình.
+- Như vây, cách này khiến chương trình tốn thời gian hơn việc chỉ cần thay thế đoạn code đã được compile(inline function).
+### Macros
+- Được xử lý ở pre-processor
+- The piece of code defined with the help of the #define directive. 
+- Macros are very useful at multiple places to replace the picece of code with a single value of the macro.
+### Phân loại:
+#### 1. Kiểu object
+```c
+#define PI 3.14;
+```
+#### 2. Kiểu hàm
+```c
+#define AREA(r) 3.14*r*r;
+```
+#### 3. Kiểu dây chuyền 
+```c
+#define PI 3.14;
+#define AREA(r) r*r*PI;
+```
+### Ứng dụng:
+#### 1. Trong header file
+- Khi lần đầu include thì macro sẽ được định nghĩa lần đầu.
+- Sau đó chương trình gặp nó sẽ ko định nghĩa lại nữa.
+```c
+#define SIZE 20
+#ifndef SIZE( if not defined)
+... // neu da define roi thi doan code nay ko co hieu luc
+#endif
+```
+#### 2. Khi thiết kế thư viện ta sẽ thiết kế cho nhiều MCU có thể dùng
+```c
+*lib.c
+#define STM32F103 	0
+#define ATMEGA		1
+#define PIC16F887	2
+
+#if MCU== STM32F103
+void BlinkLed()
+{
+	DRC= !DRC;
+	delay(1000);
+}
+#elif MCU==ATMEGA
+...
+#elif MCU==PIC16F887
+...
+#else
+...
+#endif		
+======================================
+*main.c
+#include lib.c
+#define MCU STM32F103
+int main()
+{
+	BlinkLed();
+}
+```
+#### 3. Để khi báo cho các hàm phức tạp, ta thêm `\` vào cuối dòng
+```c
+#define CREATE_FUNC(name, cmd) 		\
+void name(){				\
+	printf("%s", (char*)cmd);	\   
+}			
+CREATE_FUNC(test1, "This is test 1\n");
+CREATE_FUNC(test2, "This is test 2\n");	
+==========================================
+// #cmd stand for "cmd" - 
+// ## dung de noi chuoi - token pasting operator: Used to cocatenate two tokens during the preprocessor phase of the compilation process.
+
+#define CREATE_VAR(name)			\
+int var1__##name;				\
+int var2__##name;				\
+int var3__##name;
+```
+### Variadic macros ***
+- Dùng khi chưa biết truyền tham số gi cụ thể vào. Ta để ... thay cho input parameter
+- Trong phần khai báo hàm, Sử dụng keyword `__VA_ARGS__` để đại diện cho đoạn code sẽ truyền vào hàm.
+```c
+#define eprintf(...) fprintf (stderr, __VA_ARGS__)
+eprintf ("%s:%d: ", input_file, lineno)
+     →  fprintf (stderr, "%s:%d: ", input_file, lineno)
+```
+- Ứng dụng: tạo các function phức tạp và có thể tái sử dụng nhiều lần. 
+
+... UNG DUNG...
+__tencuafile_H(header)
+vd __STM8S_IT_H
+```
+</details>
+<details>
+<summary>STRUCT & UNION</summary>
 </details>
 
 
