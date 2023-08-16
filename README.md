@@ -763,13 +763,66 @@ eprintf ("%s:%d: ", input_file, lineno)
 ```
 - Ứng dụng: tạo các function phức tạp và có thể tái sử dụng nhiều lần. 
 
-... UNG DUNG...
-__tencuafile_H(header)
-vd __STM8S_IT_H
-```
+
 </details>
 <details>
 <summary>STRUCT & UNION</summary>
+	
+### STRUCT
+- Là kiểu dữ liệu do người dùng rự định nghĩa( user defined type)
+- Dùng để nhóm nhiều biến với kiểu dữ liệu khác nhau vào một nơi, các biến này gọi là member của struct.
+- Mỗi member trong struct sẽ có địa chỉ riêng, và tùy vào thứ tự khai báo và kiến trúc xử lý mà kích thước sẽ khác nhau. Ta cần tìm hiểu thêm về `struct padding`.
+#### Struct padding
+- Tùy thuộc vào kiến trúc của OS mà mỗi lần quét bộ nhớ của struct có kích thước khác nhau. 32 bits thì quét 4 bytes một lần, 64 bits thì quét 8 bytes một lần.
+- Riêng đối với gcc compiler, nó sẽ tối ưu hơn, kích thước của một lần quét chính là kích thước của member có kiểu dữ liệu lớn nhất.
+- Sau mỗi lần quét, nếu sử dụng không hết tài nguyên sẽ dư ra phần bộ nhớ đệm, nếu đủ để chứa member tiếp theo thì member tiếp theo sẽ được khai báo ở vùn đệm đó để tận dụng tài nguyên.
+```c
+uint8_t a;   // quet 4 byte, nhung chiem 1 byte+3 byte bo nho dem
+uint32_t b;	// 3 byte bo nho dem k du, nen dung them 4 byte
+uint8_t c;	// lai dung 1 byte, thua 3 byte bo nho dem.
+//==> struct chiếm 12 bytes.
+//===for optimization===
+uint8_t a;
+uint8_t b;
+uint32_t c; 
+//==>tong chi su dung 8 bytes.
+```
+- Thêm một ví dụ:
+```c
+uint8_t var[5]; su dung 8 byte, dung 5 du 3
+uint16_t var1[2]; dung 2 byte bo nhow dem va them 4 byte
+uint32_t var2[2]; dung them 4*2 bytes
+//=> tong su dung 4+4+4+4+4
+```
+### UNION
+- Union về cơ bản cũng khá giống struct, chỉ khác là các member của nó share nhau cùng một địa chỉ.
+- Sử dụng để khai báo kiểu dữ liệu gồm nhiều member mà tại một thời điểm chỉ được chọn một member duy nhất.
+- Ứng dụng:
+	- GPIo - tại một thời điểm chỉ đóng 1 vài trò duy nhất là input hoặc output
+ 	- Kết hợp với struct để truy xuất dữ liệu.
+- Ví dụ:
+```c
+#include"stdio.h"
+typedef union{
+int arr1[5];
+int arr2[3];
+int arr3[2];
+} unionArray;
+int main()
+{
+  	unionArray arr;
+	for(int i=0; i<5; i++)
+		arr.arr1[i]= i*1;
+	for(int i=0; i<3; i++)
+		arr.arr2[i]= i*2;
+	for(int i=0; i<2; i++)
+		arr.arr3[i]=i*3;
+	// Print arr1
+  	for(int i=0; i<5; i++)
+		printf("Arr1[%d]= %d\n", i, arr.arr1[i]);
+}
+// The result is 0, 3, 4, 3, 4 becuased of overwritten at the same address.
+```
 </details>
 
 
