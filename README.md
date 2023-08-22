@@ -824,6 +824,46 @@ int main()
 // The result is 0, 3, 4, 3, 4 becuased of overwritten at the same address.
 ```
 </details>
+<details>
+<summary>BIT-WISE & MASK</summary>
+
+### BIT-WISE OPERATION
+- Trong khoa học máy tính, bit-wise operation được thực hiện trên một hoặc nhiều chuỗi nhị phân tại cấp độ từng bit riêng biệt.
+- Các phép toán này có ưu điểm là thực hiện nhanh, được hỗ trợ trực tiếp bởi vi xử lý.
+- Ứng dung: Điều khiển các giá trị để so sánh, tính toán.
+#### 1. AND(&) 
+- Toán tử thao tác bit AND lấy 2 toán hạng nhị phân có chiều dài bằng nhau và thực hiện phép toán lý luận AND trên mỗi cặp bit tương ứng bằng cách nhân chúng lại với nhau.
+- Nhờ đó, nếu cả hai bit ở vị trí được so sánh đều là 1, thì bit hiển thị ở dạng nhị phân sẽ là 1 (1 x 1 = 1); ngược lại thì kết quả sẽ là 0 (1 x 0 = 0).
+- Ví dụ: ` 0b0101 | 0b1011 = 0b0001 `
+#### 2. OR(|) 
+- Phép toán trên thao tác bit OR lấy hai dãy bit có độ dài bằng nhau và thực hiện phép toán OR trên mỗi cặp bit tương ứng. Kết quả ở mỗi vị trí sẽ là 0 nếu cả hai bit là 0, ngược lại thì kết quả là 1.
+- Ví dụ: ` 0b0101 | 0b1011 = 0b1111 `
+#### 3. NOT(~)
+- Toán tử thao tác bit NOT, hay còn gọi là còn được gọi là toán tử lấy phần bù (complement), là toán tử một ngôi thực hiện phủ định luận lý trên từng bit, tạo thành bù 1 (one’s complement) của giá trị nhị phân cho trước. Bit nào là 0 thì sẽ trở thành 1, và 1 sẽ trở thành 0.
+- Ví dụ: ` NOT 0b0101 = 0b1010 `
+#### 4. XOR(^) - Excludesive OR
+- Phép toán thao tác bit XOR lấy hai dãy bit có cùng độ dài và thực hiện phép toán logic bao hàm XOR trên mỗi cặp bit tương ứng. Kết quả ở mỗi vị trí là 1 chỉ khi bit đầu tiên là 1 hoặc nếu chỉ khi bit thứ hai là 1, nhưng sẽ là 0 nếu cả hai là 0 hoặc cả hai là 1. Ở đây ta thực hiện phép so sánh hai bit, kết quả là 1 nếu hai bit khác nhau và là 0 nếu hai bit giống nhau.
+- Ví dụ:  ` 0b0101 ^ 0b1011 = 0b1110 `
+#### 5. Bit-Shift (Right-shift >> | Left-shift <<)
+- Dùng để di chuyển cả chuỗi nhị phân sang trái hoặc phải so với vị trí ban đầu để thay đổi giá trị. Shif sang trái 1 đơn vị là nhân với 2, shift sang phải 1 đơn vị là chia cho 2.
+- Ví dụ: `0b0001 0000 <<2 = 0b0100 0000 `
+
+### BIT MASKING
+- Bit Mask là dữ liệu được sử dụng cho các bit-wise operations. Sử dụng nó, một hoặc nhiều bit trong một byte/word có thể được bật tắt hoặc đảo tùy thuộc vào mục đích khác nhau.
+- Ứng dụng: Tối ưu thuật toán, đặt lại giá trị có bit cần thiết thay vì đặt lại giá trị của cả byte/word gây xung đột chương trình.
+- Ví dụ:
+  - Tách lấy trạng thái thanh ghi PC0 thì PINC:
+    ```c
+    bool inp = PINC & 1<<0;
+    ```
+  - Set và clear bit trên thanh ghi, giả sử ta chỉ bật cổng nào đó lên trong 1 giây rồi tắt(cổng số 3)
+    ```c
+    PORTD |= 1<<3;
+    delay(1000);
+    PORTD & ~(1<<3);
+    ```
+
+</details>
 
 
 
