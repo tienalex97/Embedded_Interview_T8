@@ -15,21 +15,21 @@ typedef enum {
 } DO_DUNG_CA_NHAN;
 
 #define Get_String(X)  case X : return #X
-#define call(X, Y)  \
-    X(MU) Y \
-    X(QUAN) Y\
-    X(AO) Y\
-    X(GIAY)  Y\
-    X(DEP)  Y\
-    X(DONG_HO) Y\
-    X(KINH) Y\
-    X(THAT_LUNG) Y
+#define call(X)  \
+    X(MU) ; \
+    X(QUAN) ;\
+    X(AO) ;\
+    X(GIAY)  ;\
+    X(DEP)  ;\
+    X(DONG_HO) ;\
+    X(KINH) ;\
+    X(THAT_LUNG) ;
 
-static char* const Get_Name(uint8_t value)
+char* const Get_Name(uint8_t value)
 {
     switch (value)
     {
-        call(Get_String, ;)
+        call(Get_String)
         default: return NULL;
     }
 }
@@ -37,26 +37,26 @@ void AddToCart(uint8_t *Gio_hang, DO_DUNG_CA_NHAN ten)
 {
     *Gio_hang|= ten;
 }
-void CheckItem(uint8_t *Gio_hang, DO_DUNG_CA_NHAN ten)
+void CheckItem(uint8_t Gio_hang, DO_DUNG_CA_NHAN ten)
 {
     printf("Check hang: \n");
-    uint8_t check;
     for(int i=0; i<8;i++)
     {
-        check = 1<<i;
+        uint8_t check = 1<<i;
         if(check& ten)
         {
             printf("%s ", Get_Name(check));
-            if(check & *Gio_hang)   printf("da co.\n");
+            if(check & Gio_hang)   printf("da co.\n");
             else printf("chua co.\n");
         }
     }
 }
-void ShowItem(int *Gio_hang){
-    printf("Show hang: \n");
-    for(int i=0;i<8;i++){  
+void ShowItem(uint8_t Gio_hang){
+    printf("Show hang: \n"); 
+    for(int i=0;i<8;i++)
+    {  
         uint8_t check=1<<i;      
-        if(*Gio_hang & check)   printf("%s \n",Get_Name(check));
+        if(Gio_hang & check)   printf("%s \n",Get_Name(check));
     }
 }    
 
@@ -64,6 +64,6 @@ int main()
 {
     uint8_t GIO_HANG=0;
     AddToCart(&GIO_HANG, QUAN|AO|GIAY|DEP|MU);
-    ShowItem(&GIO_HANG);
-    CheckItem(&GIO_HANG, DONG_HO|KINH|GIAY);
+    ShowItem(GIO_HANG);
+    CheckItem(GIO_HANG, DONG_HO|KINH|GIAY);
 }
