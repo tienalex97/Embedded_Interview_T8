@@ -1,15 +1,30 @@
- // 1. Write all chars after '.' (ASCII lowercut - 32= uppercut)
-// 2. Find out where is the string "around the world" and what is first index of this string.
-// 3. Find the string "around the world" and replace it by "learn about".
+/*
+* File: string_operations.c
+* Author: Tien Alex
+* Date: 28/08/2023
+* Description:
+     1. Write all chars after '.' (ASCII lowercut - 32= uppercut)
+     2. Find out where is the phrase "around the world" and what is first index.
+     3. Find the phrase "around the world" and replace it by "learn about".
+*/
 
 #include<stdio.h>
 #include<stdint.h>
 #include<stdlib.h>
 #include<stdbool.h>
 
-uint8_t getLength(char* string) ;
+
+// Declare prototype of utility functions.
+
+uint8_t getLength(const char* string) ;
 void displayArr(const char* arr);
-uint8_t getLength(char* string)
+/* 
+* Function: getLength
+* Description: returns length of a string.
+* Input: source string
+* Output: length
+*/
+uint8_t getLength(const char* string)
 {
     uint8_t count= 0;
     while(string[count] != '\0')
@@ -18,7 +33,12 @@ uint8_t getLength(char* string)
     }
     return count;
 }
-
+/* 
+* Function: displayArr
+* Description: Displays all members of an array.
+* Input: source string
+* Output : void
+*/
 void displayArr(const char* arr)
 {
     uint8_t i=0; 
@@ -31,16 +51,15 @@ void displayArr(const char* arr)
     printf(".\n");
 }
 
-char* uppercaseAfterChar(char* string, char const c)
+/* 
+* Function: upperCaseAfterChar
+* Description: Changes all characeters of a string after particular character to uppercase.
+* Input:  source array, particular char
+* Output: source array
+*/
+char* uppercaseAfterChar( char* arr, char const c)  
 {
     uint8_t i=0;
-    // Create a new array to keep in inputed string stay primative.
-    char *arr= malloc(sizeof(char)*getLength(string));
-    while(string[i]!= '\0')
-    {
-        arr[i]= string[i];
-        i++;
-    }
     i=0;
     while(arr[i] != '\0')
     {
@@ -50,7 +69,7 @@ char* uppercaseAfterChar(char* string, char const c)
             while(arr[j]!= '\0')
             {
                 if(arr[j]!= ' ')    
-                    arr[j] = arr[j] -32;
+                    arr[j] -= 32;
                 j++;
             }
         }
@@ -59,21 +78,27 @@ char* uppercaseAfterChar(char* string, char const c)
     return arr;
 }
 
-
-uint8_t getIndexOfStringInArr(char* string, char* string1)         // Just use in case that phrase is appeared only once in string. 
+/* 
+* Function: getIndexOfStringInArr
+* Description: returns the index of a string that appeared in an char array.
+Just use in case that phrase is appeared only once in string.
+* Input: source array, string that need to find index
+* Output:   index
+*/  
+uint8_t getIndexOfStringInArr(const char* arr, const char* str)         
 {
     bool bEqual= false;
-    uint8_t phraseLength= getLength(string1);
+    uint8_t phraseLength= getLength(str);
     uint8_t i=0; 
     uint8_t index;                          
-    while(string[i] != '\0')
+    while(arr[i] != '\0')
     {
-        if(string[i] ==*string1)
+        if(arr[i] ==*str)
         {
             uint8_t countEqual=0;
             for(int n=0; n<phraseLength; n++)
             {
-                if(string[i+n]== string1[n])
+                if(arr[i+n]== str[n])
                     countEqual++;
             }
             if(countEqual==phraseLength) 
@@ -88,10 +113,14 @@ uint8_t getIndexOfStringInArr(char* string, char* string1)         // Just use i
     return index;
 }
 
-
-char* replaceStringInArray(char* arr, char* str1, char* str2 )
+/* 
+* Function: replaceStringInArray
+* Description: Finds a string in array and replaces it by another string.
+* Input: source array, string to remove, string to replace
+* Output: source array
+*/
+char* replaceStringInArray(char* arr, const char* str1, const char* str2 )  // Allow changing value of arr.
 {
-    // Crerate tww new temporary arrays to store remain parts of old arr
     uint8_t indexOfString1 = getIndexOfStringInArr(arr, str1);
     if(indexOfString1 ==0)
     {
@@ -156,6 +185,10 @@ int main()
     char str2[]= "learn about";
     displayArr(replaceStringInArray(array,str1, str2));
 
-   
+    // 1. Write all chars after '.' (ASCII lowercut - 32= uppercut)
+    // 2. Find out where is the phrase "around the world" and what is first index.
+    // 3. Find the phrase "around the world" and replace it by "learn about".
+
+
     return 0;
 }
