@@ -5,7 +5,9 @@
 
 typedef struct {
     char* w;
-    int length;
+    uint8_t length;
+    uint8_t repeat;
+    bool bDisplay;
 } Words;
 
 Words *getWord(char* arr)
@@ -55,7 +57,7 @@ Words *getWord(char* arr)
     return word;
 }
 
-void display(Words *word)
+void displayWord(Words *word)
 {
     for(int i=0; i<word->length; i++)
     {
@@ -77,22 +79,33 @@ int main()
     
     char array[]= "mot hai ba, mot hai hai mot, ba bon, bon ba";
     Words* word= getWord(array);
-    for(int i= 0; i< 11; i++)
-    {
-       // display(word+i);
-    }
+    
     for(int i=0; i<11; i++)
-    {
-        int nCount= 0;
-        for(int j=1; j<11; j++)
+    {   
+        uint8_t count=0;
+        for(int j=0; j<11; j++)
         {
             if(bIsEqual(word+i, word+j))
-                nCount ++;
-            
+            {
+                count++;
+                if(count >= 2) (word+j)->bDisplay = false;
+                else (word+j)->bDisplay= true;
+            }
+
         }
-        printf("tu ");
-        display(word+i);
-        printf(" xuat hien %d lan\n", nCount);
+        (word+i)->repeat= count;
+        
+    }
+
+    for(int i=0; i<11; i++)
+    {
+        if((word+i)->bDisplay )
+        {
+            printf("tu ");
+            displayWord(word+i);
+            printf(" xuat hien %d lan", (word+i)->repeat);
+            printf("\n");
+        }
     }
     return 0;
 }
