@@ -119,54 +119,99 @@ uint8_t getIndexOfStringInArr(const char* arr, const char* str)
 * Input: source array, string to remove, string to replace
 * Output: source array
 */
-char* replaceStringInArray(char* arr, const char* str1, const char* str2 )  // Allow changing value of arr.
-{
-    uint8_t indexOfString1 = getIndexOfStringInArr(arr, str1);
-    if(indexOfString1 ==0)
-    {
-        printf("The string that need to be replaced has not found!\n");
-        return NULL ;
-    }
-    uint8_t lengthOfArr= getLength(arr);
-    uint8_t lengthOfStr1 = getLength(str1);
-    uint8_t lengthOfStr2= getLength(str2);
-    uint8_t lenghtOfTempString= lengthOfArr+lengthOfStr2-lengthOfStr1;
-    char* tempString= malloc(sizeof(char)*(lenghtOfTempString));
-    uint8_t i=0;
-    while(i<indexOfString1)
-    {
-        tempString[i]= arr[i];
-        i++;
-    }
-    uint8_t j=0;
-    while(j<lengthOfStr2)
-    {
-        tempString[i+j]= str2[j];
-        j++;
-    }
-    uint8_t k=0;
-    while(i+j+k<lenghtOfTempString)
-    {
-        tempString[i+j+k] = arr[indexOfString1+lengthOfStr1+k];
-        k++;
-    }
 
-    // Write back to original arr
-    i=0;
-    while(tempString[i]!='\0')
+
+char* replaceString(char* string, char* str1, char* str2)
+{
+    uint8_t indexStr1= getIndexOfStringInArr(string, str1);
+    uint8_t lenStr1= getLength(str1);
+    uint8_t lenStr= getLength(string);
+    uint8_t lenStr2= getLength(str2);
+
+    uint8_t lenNewStr= lenStr+lenStr2- lenStr1;
+    // First case: new string is shorter than replaced string.
+    if(lenNewStr<lenStr)
     {
-        arr[i]= tempString[i]; 
-        i++;
+        for(uint8_t i=0; i<lenStr2; i++)
+        {
+            string[indexStr1+i]= str2[i];
+        }
+        for(uint8_t i= 0; i<lenNewStr- indexStr1-lenStr2; i++)
+        {
+            string[i+ indexStr1+lenStr2] = string[i+indexStr1+lenStr1];
+        }
+        string[lenNewStr]= '\0';
     }
-    arr[i]= '\0';
-    free(tempString);
-    return arr;
+    else if(lenNewStr>lenStr)
+    {
+        for(uint8_t i=0; i< lenNewStr-indexStr1-lenStr2; i++)
+        {
+            string[lenNewStr-1-i]= string[lenStr-1-i];
+        }
+        for(uint8_t i=0; i<lenStr2; i++)
+        {
+            string[indexStr1+i]= str2[i];
+        }
+        string[lenNewStr]= '\0';
+
+    }
+    else{
+        return "error 404 not found!\n";
+    }
+  
     
+    return string;
 }
+
+// char* replaceStringInArray(char* arr, const char* str1, const char* str2 )  // Allow changing value of arr.
+// {
+//     uint8_t indexOfString1 = getIndexOfStringInArr(arr, str1);
+//     printf("%d", indexOfString1);
+//     if(indexOfString1 ==0)
+//     {
+//         printf("The string that need to be replaced has not found!\n");
+//         return NULL ;
+//     }
+//     uint8_t lengthOfArr= getLength(arr);
+//     uint8_t lengthOfStr1 = getLength(str1);
+//     uint8_t lengthOfStr2= getLength(str2);
+//     uint8_t lenghtOfTempString= lengthOfArr+lengthOfStr2-lengthOfStr1;
+//     char* tempString= malloc(sizeof(char)*(lenghtOfTempString));
+//     uint8_t i=0;
+//     while(i<indexOfString1)
+//     {
+//         tempString[i]= arr[i];
+//         i++;
+//     }
+//     uint8_t j=0;
+//     while(j<lengthOfStr2)
+//     {
+//         tempString[i+j]= str2[j];
+//         j++;
+//     }
+//     uint8_t k=0;
+//     while(i+j+k<lenghtOfTempString)
+//     {
+//         tempString[i+j+k] = arr[indexOfString1+lengthOfStr1+k];
+//         k++;
+//     }
+
+//     // Write back to original arr
+//     i=0;
+//     while(tempString[i]!='\0')
+//     {
+//         arr[i]= tempString[i]; 
+//         i++;
+//     }
+//     arr[i]= '\0';
+//     free(tempString);
+//     return arr;
+    
+// }
 
 int main()
 {
-    char array[]= "to help people around the world learn how to do everything. today we learn about that";
+    char array[]= "to help people around the world learn how to around the world everything. today we learn about that";
     printf("String inputed is: \n");
     displayArr(array);
     printf("=============================\n");
@@ -181,9 +226,14 @@ int main()
     else    printf("Khong phat hien tu khoa can tim \n");
 
     printf("============================\n");
-    printf("After replaced 'around the world' by 'learn about', the arr now is: \n");
-    char str2[]= "learn about";
-    displayArr(replaceStringInArray(array,str1, str2));
+    
+    char str2[]= "learn about real thing";
+ //   displayArr(replaceStringInArray(array,str1, (str2));
+    char str3[]= "everything";
+    char str4[] ="1thing";
+    displayArr(replaceString(array,str1, str2));
+    displayArr(replaceString(array,str1, str2));
+    
 
     // 1. Write all chars after '.' (ASCII lowercut - 32= uppercut)
     // 2. Find out where is the phrase "around the world" and what is first index.
