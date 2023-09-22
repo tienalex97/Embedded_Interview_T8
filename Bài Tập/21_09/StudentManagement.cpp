@@ -27,14 +27,14 @@ private:
     int ID;
     std::string sName;
     int nAge;
-    Sex sex;
+    int sex;
     float fDiemToan;
     float fDiemVan;
     float fDiemAnh;
 
 public:
     static int id;
-    cStudent(std::string name, int tuoi, Sex s, float toan, float van, float anh)
+    cStudent(std::string name, int tuoi, int s, float toan, float van, float anh)
     {   
         ID= id;
         id++;
@@ -45,7 +45,7 @@ public:
         fDiemVan= van;
         fDiemAnh= anh;
     }
-    void Update(std::string name, int tuoi, Sex s, float toan, float van, float anh)
+    void Update(std::string name, int tuoi, int s, float toan, float van, float anh)
     {
         sName= name;
         nAge= tuoi;
@@ -68,7 +68,7 @@ public:
     {
         return this->nAge;
     }
-    Sex GetSex()
+    int GetSex()
     {
         return this->sex;
     }
@@ -201,8 +201,7 @@ void UpdateInfo(std::list<cStudent*> &list)
             int n;
             std::string sName= (*it)->GetName();
             int nAge= (*it)->GetAge();
-            Sex sex= (*it)->GetSex();
-            int key;
+            int sex= (*it)->GetSex();
             float fDiemToan= (*it)->GetDiemToan();
             float fDiemVan= (*it)->GetDiemVan();
             float fDiemAnh = (*it)->GetDiemAnh();
@@ -232,10 +231,7 @@ void UpdateInfo(std::list<cStudent*> &list)
                         break;
                     case 3:
                         std::cout<<"Input new sex: ";
-                        std::cin>>key;
-                        if(key==0) sex= NAM;
-                        else if(key==1) sex= NU;
-                        else sex= UNKNOWN;
+                        std::cin>>sex;
                         break;
                     case 4:
                         std::cout<<"Input new diem toan: ";
@@ -318,6 +314,53 @@ void SortByAvrPoint(std::list<cStudent*> &list)
     std::cout<<"After sorted by avarage point, ";
     DisplayStudents(list);
 }
+void SaveStudentList(std::list<cStudent*> list)
+{
+    std::ofstream file("database.txt");
+    if(file.is_open())
+    {
+        std::list<cStudent*>::iterator it;
+        for(it = list.begin(); it!= list.end(); ++it)
+        {
+            file<<(*it)->GetName()<<"\t"<<(*it)->GetAge()<<"\t"<<(*it)->GetSex()<<"\t"<<(*it)->GetDiemToan()<<"\t"<<
+            (*it)->GetDiemVan()<<"\t"<<(*it)->GetDiemAnh()<<"\t"<<(*it)->GetAvaragePoint()<<"\t"<<
+            (*it)->GetHocLuc()<<"\n";       
+        }
+        std::cout<<"Saved!\n";
+        file.close();
+    } 
+    else std::cout<<"Can't open file. Try again!\n";
+}
+void LoadStudentList(std::list<cStudent*> &list)
+{
+    std::ifstream file("database.txt", std::ios::in| std::ios::binary);
+    if(file.is_open())
+    {
+        while(!file.eof() )
+        {
+            std::string name;
+            int age;
+            int sex;
+            float diemToan;
+            float diemVan;
+            float diemAnh;
+            float diemTB;
+            int xepLoai;
+           
+            file>>name>>age>>sex>>diemToan>>diemVan>>diemAnh>>diemTB>>xepLoai;
+            if(name!= "")
+            {
+                cStudent* student = new cStudent(name, age, sex, diemToan, diemVan, diemAnh);
+                listStudents.push_back(student);
+            }
+            else break;
+           
+        }
+        std::cout<<"Load from database successfully! \n";
+    }
+    else
+        std::cout<<"Fail to load from database! \n";
+}
 
 int main()
 {
@@ -334,10 +377,13 @@ int main()
     // 5. Sort by average point.
     // 6. Sort by name(a-z)
     // 7. Display list of all students.
-    cStudent* tien= new cStudent("Tien", 27, NAM, 9.0f, 6.9f, 9.0f);
-    cStudent* linh = new cStudent("Linh", 27, NU, 9.0f, 9.0f, 9.0f);
-    listStudents.push_back(tien);
-    listStudents.push_back(linh);
+    // cStudent* tien= new cStudent("Tien", 27, 0, 9.0f, 6.9f, 9.0f);
+    // cStudent* linh = new cStudent("Linh", 27, 1, 9.0f, 9.0f, 9.0f);
+    // listStudents.push_back(tien);
+    // listStudents.push_back(linh);
+    LoadStudentList(listStudents);
+
+
     int n;
     
     std::cout<<"1. Add student.\n";
@@ -347,6 +393,7 @@ int main()
     std::cout<<"5. Sort by average point.\n";
     std::cout<<"6. Sort by name(a-z).\n";
     std::cout<<"7. Display list of all students.\n";
+    std::cout<<"8. Save. \n";
 
     while(1)
     {
@@ -355,7 +402,7 @@ int main()
         while(1) 
         {
             std::cin>>n;
-            if(n<1 || n>7)
+            if(n<1 || n>8)
                 std::cout<<"Invalid input. Try again!\n";
             else break;
         }
@@ -384,9 +431,12 @@ int main()
         case 7:
             DisplayStudents(listStudents);
             break;
+        case 8: 
+            SaveStudentList(listStudents);
+            break;
         }
     }
     
     return 0;
 }
-/*https://www.geeksforgeeks.org/readwrite-class-objects-fromto-file-c/*/
+/*https://cplusplus.com/doc/tutorial/files/*/
