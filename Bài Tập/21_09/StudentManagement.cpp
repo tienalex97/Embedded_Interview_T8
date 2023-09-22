@@ -3,7 +3,8 @@
 #include<string>
 #include<list>
 #include<iomanip>  
-
+#include<fstream>
+#include<algorithm>
 
 
 typedef enum{
@@ -16,6 +17,9 @@ typedef enum{
     TRUNG_BINH,
     YEU
 } HocLuc;
+
+class cStudent;
+std::list<cStudent*> listStudents; 
 
 class cStudent
 {
@@ -98,7 +102,7 @@ public:
 
 
 int cStudent::id= 1000;
-std::list<cStudent*> listStudents;
+
 
 void AddStudent(std::list<cStudent*> &list)
 {
@@ -108,17 +112,17 @@ void AddStudent(std::list<cStudent*> &list)
     int key;
     float diemToan, diemVan, diemAnh;
 
-    std::cout<<"Input name:";
+    std::cout<<"Input name: ";
     std::cin>>name; 
 
-    std::cout<<"Input tuoi:";
+    std::cout<<"Input tuoi: ";
     while(1)
     {
         std::cin>>tuoi;
         if(tuoi>=18 && tuoi<50) break;
         else std::cout<<"tuoi must in range 18-50\n";
     }
-    std::cout<<"Sex: 0 - Male/ 1 - Female";
+    std::cout<<"Sex: (0 - Male/ 1 - Female) ";
     std::cin>>key;
     
     switch (key)
@@ -209,6 +213,7 @@ void UpdateInfo(std::list<cStudent*> &list)
             std::cout<<"4. Update diem toan."<<std::endl;
             std::cout<<"5. Update diem van."<<std::endl;
             std::cout<<"6. Update diem anh."<<std::endl;
+            std::cout<<"7. Delete student."<<std::endl;
             std::cout<<"0. To exit."<<std::endl;
             while(1)
             {
@@ -244,6 +249,7 @@ void UpdateInfo(std::list<cStudent*> &list)
                         std::cout<<"Input diem anh: ";
                         std::cin>>fDiemAnh;
                         break;
+                
                 }
                 
                 (*it)->Update(sName,nAge, sex,fDiemToan,fDiemVan, fDiemAnh);
@@ -294,8 +300,33 @@ void FindInfoByName(std::list<cStudent*> list)
     
 }
 
+void SortById(std::list<cStudent*> &list)
+{
+    list.sort([](cStudent* a, cStudent* b){return a->GetID()>b->GetID();});
+    std::cout<<"After sorted by ID, ";
+    DisplayStudents(list);
+}
+void SortByName(std::list<cStudent*> &list)
+{
+    list.sort([](cStudent*a, cStudent* b){return a->GetName()<b->GetName();});
+    std::cout<<"After sorted by name, ";
+    DisplayStudents(list);
+}
+void SortByAvrPoint(std::list<cStudent*> &list)
+{
+    list.sort([](cStudent* a, cStudent* b){return a->GetAvaragePoint()>b->GetAvaragePoint();});
+    std::cout<<"After sorted by avarage point, ";
+    DisplayStudents(list);
+}
+
 int main()
 {
+
+    
+    // std::ofstream file_obj;
+    // file_obj.open("Input.txt", std::ios::in);
+
+
     // 1. Add student
     // 2. Update info by id
     // 3. Sort students by id
@@ -303,6 +334,10 @@ int main()
     // 5. Sort by average point.
     // 6. Sort by name(a-z)
     // 7. Display list of all students.
+    cStudent* tien= new cStudent("Tien", 27, NAM, 9.0f, 6.9f, 9.0f);
+    cStudent* linh = new cStudent("Linh", 27, NU, 9.0f, 9.0f, 9.0f);
+    listStudents.push_back(tien);
+    listStudents.push_back(linh);
     int n;
     
     std::cout<<"1. Add student.\n";
@@ -335,13 +370,16 @@ int main()
             UpdateInfo(listStudents);
             break;
         case 3: 
+            SortById(listStudents);
             break;
         case 4: 
             FindInfoByName(listStudents);
             break;
         case 5: 
+            SortByAvrPoint(listStudents);
             break;
         case 6: 
+            SortByName(listStudents);
             break;
         case 7:
             DisplayStudents(listStudents);
