@@ -1,0 +1,3 @@
+/home/tienalex/Embedded_Interview_T8/Bài Tập/22_09/CMakeFiles/mainapp.dir
+/home/tienalex/Embedded_Interview_T8/Bài Tập/22_09/CMakeFiles/edit_cache.dir
+/home/tienalex/Embedded_Interview_T8/Bài Tập/22_09/CMakeFiles/rebuild_cache.dir
