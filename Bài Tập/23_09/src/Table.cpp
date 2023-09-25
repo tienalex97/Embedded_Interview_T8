@@ -1,4 +1,4 @@
-#pragma once
+
 #include"Table.h"   
 
 typedef enum{
