@@ -22,7 +22,7 @@ class Table
         void SetStatus(int status);
         int GetID();
         void GoiThemMon(MonAn* mon, int soluong);
-        void XoaBotMon(MonAn* mon, int soluong);
+        void XoaBotMon(MonAn* mon);
         void Display();
         void ThanhToan();
 };   

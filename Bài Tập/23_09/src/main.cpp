@@ -4,6 +4,7 @@
 #include<utility>
 
 #include"Table.h"
+//#include"MonAn.h"
 
 
 using namespace std;
@@ -77,7 +78,6 @@ void SuaThongTin(list<MonAn*> &list)
         {
             if(l->GetName()== name)
             {
-                
                 bool bExist= true;
                 string n;
                 do
@@ -95,15 +95,12 @@ void SuaThongTin(list<MonAn*> &list)
                         else bExist= false;
                     }
                 } while(bExist);
-                
                 cout<<"Gia moi: ";
                 float price;
                 cin>>price;
-                
                 l->UpdateMonAn(price, n);
                 cout<<"Mon an da duoc thay doi thong tin thanh cong!"<<endl;
                 DisplayMonAn(l);
-                
                 bExit= true;
             }
             else 
@@ -116,7 +113,7 @@ void SuaThongTin(list<MonAn*> &list)
             }
         }
     }
-     cout<<"______________________\n";
+    cout<<"______________________\n";
 }
 
 void XoaMonKhoiMenu(list<MonAn*> &listMenu)
@@ -146,10 +143,7 @@ void XoaMonKhoiMenu(list<MonAn*> &listMenu)
                 }
                 else cout<<"Mon an nay chua duoc xoa! "<<endl;
             }
-            else
-            {
-                cout<<"Khong tim thay mon an. Vui long thu lai! "<<endl;
-            }
+            else cout<<"Khong tim thay mon an. Vui long thu lai! "<<endl;
         }
     }
      cout<<"______________________\n";
@@ -159,9 +153,9 @@ void DisplayTables(vector<Table*> vec)
 {
     cout<<"\t"<<"TABLES"<<endl;
     cout<<"BAN"<<"\t";
-    for(auto &v: vec)
+    for(int i=0; i<vec.size(); i++)
     {
-        cout<<v->GetID()<<"\t";
+        cout<<vec[i]->GetID()<<"\t";
     }
     cout<<endl;
     cout<<"Status"<<"\t";
@@ -201,16 +195,33 @@ void GoiThemMon(list<MonAn*> &listMenu, vector<Table*> &vec, int soban)
     {
         if((*it)->GetName() == name)
         {
-            cout<<vec[soban]->GetID()<<endl;
             vec[soban]->GoiThemMon(*it, soluong);
             cout<<"Mon an "<< name<< " da duoc them thanh cong. So luong: "<<soluong<<endl;
-
         }
         else 
+        {
             cout<<"Ten mon an khong dung. Thu lai! "<<endl;
+        }
     }
-
 }
+void XoaBotMon(list<MonAn*> &listMenu, vector<Table*> &vec, int soban)
+{
+    cout<<"Xin moi ban nhap ten mon an: ";
+    string name;
+    cin>>name;
+    list<MonAn*>::iterator it;
+    for(it= listMenu.begin(); it!=listMenu.end(); ++it )
+    {
+        if((*it)->GetName() == name)
+        {
+            vec[soban]->XoaBotMon(*it);
+            cout<<"Mon an "<< name<< " da duoc xoa thanh cong." <<endl;
+        }
+        else cout<<"Ten mon an khong dung. Thu lai! "<<endl;
+    }
+}
+
+
 int main()
 {
     // Write C++ code here
@@ -253,12 +264,10 @@ int main()
             bool bExit= false;
             while(!bExit)
             {
-                 
                 int n;
                 cout<<"\t"<<"MANAGER"<<endl;
                 cout<<"Xin moi nhap lua chon: ";
                 cin>> n;
-
                 switch (n)
                 {
                 case 0:
@@ -274,8 +283,6 @@ int main()
                         {
                             Table* newTable= new Table();
                             vecTables.push_back(newTable);
-                            //cout<< i<< endl;
-
                         }
                         cout<<"Thiet lap so ban thanh cong! \n";
                     } 
@@ -295,10 +302,8 @@ int main()
                     break;
                 default:
                     break;
+                }
             }
-        
-            }
-            
         }
         else if(input ==2)
         {
@@ -324,7 +329,7 @@ int main()
 
             while (!bExit)
             {
-               cout<<"____________________"<<endl;
+                cout<<"____________________"<<endl;
                 cout<<"Moi ban nhap lua chon: ";
                 cin>>luachon;
 
@@ -335,24 +340,34 @@ int main()
                         break;
                     case 1:
                         DisplayMenu(listMonAn);
-                        cout<<vecTables[nSoBan]->GetID()<<endl;
-                        //GoiThemMon(listMonAn, vecTables, nSoBan);
+                        GoiThemMon(listMonAn, vecTables, ban);
                         break;  
                     case 2:
                         DisplayMenu(listMonAn);
+                        XoaBotMon(listMonAn, vecTables, ban);
                         break;
-                        
-                        
+                    case 3:
+                        cout<<"\t"<<"Danh sach cac mon da order: "<<endl;
+                        vecTables[ban]->Display();
+                    case 4:
+                        vecTables[ban]->SetStatus(PAY);
+                        vecTables[ban]->Display();
+                        vecTables[ban]->ThanhToan();
+
+                        cout<<"Ban co chac chan muon thanh toan? (y/n)"<<endl;
+                        string confirm;
+                        cin>>confirm;
+                        if(confirm=="y"|| confirm=="yes")
+                        {
+                            cout<<"Cam on quy khach, xin hen gap lai! "<<endl;
+                            vecTables[ban]->SetStatus(FREE);
+                        }
+                        else cout<<"Ban chua thanh toan. Vui long thu lai sau!"<<endl;
                 }
             }
-            
-            
         }
         else cout<<"Ban nhap sai roi, vui long thu lai di! "<<endl;
-        
-        
     }
-   
-
+    
     return 0;
 }
