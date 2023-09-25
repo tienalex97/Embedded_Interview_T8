@@ -1,4 +1,4 @@
-### To compiler, run these commands in terminal:
+### To compile, run these commands in terminal:
 ```c
   cmake .
   make
