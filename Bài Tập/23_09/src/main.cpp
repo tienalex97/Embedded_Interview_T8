@@ -349,6 +349,7 @@ int main()
                     case 3:
                         cout<<"\t"<<"Danh sach cac mon da order: "<<endl;
                         vecTables[ban]->Display();
+                        break;
                     case 4:
                         vecTables[ban]->SetStatus(PAY);
                         vecTables[ban]->Display();
