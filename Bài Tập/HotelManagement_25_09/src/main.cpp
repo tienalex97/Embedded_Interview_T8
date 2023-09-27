@@ -5,6 +5,7 @@
 #include"cAccount.h"
 
 #include"cRoom.h"
+#include"cPaymentHistory.h"
 
 using namespace std;
 
@@ -129,8 +130,13 @@ void DisplayBill( cRoom* &room)
     room->GetClient()->SetTimeCheckOut();
     cout<<"Check out: "<<"\t"<<room->GetClient()->GetTimeCheckOut()<<endl;
     cout<<"\t###"<<" Summary: "<< 1000 <<"$." <<endl;
+    cout<<"Choose a paymet method: "<<endl;
+    cout<<"1. Credit card.\n";
+    cout<<"2. Internet banking.\n";
+    cout<<"0. Return.\n";
+    cout<<"######################\n";
 }
-void CheckOut( vector<cRoom*> &vec, const int room_number)
+void CheckOut( vector<cRoom*> &vec, const int room_number, vector<cPaymentHistory*> &vecPay)
 {   
     bool bCheckedOut= false;
     while(!bCheckedOut)
@@ -162,10 +168,14 @@ void CheckOut( vector<cRoom*> &vec, const int room_number)
                     if(confirm_payment=="y"||confirm_payment=="yes")
                     {
                         cout<<"Payment is processing\n";
-                        for(int i=0; i<20; i++) cout<<".";
+                        for(int i=0; i<20; i++) cout<<"#";
                         cout<<endl;
                         v->UpdateRoomStatus(FREE);
                         v->GetClient()->CheckOut();
+                        cPaymentHistory* new_payment= new cPaymentHistory(v->GetClient(), v->GetClient()->GetTimeCheckOut(), 1000.0f);
+                        vecPay.push_back(new_payment);
+
+                        // Reset room state
                         v->SetClient(nullptr);
                         cout<<"Payment was successfully! Finished check out! \n";
                         bCheckedOut= true;
@@ -181,8 +191,8 @@ void CheckOut( vector<cRoom*> &vec, const int room_number)
 
 bool bLogin(list<cAccount*> &listAccount)
 {
-    string username;
-    string password;
+    string username="";
+    string password="";
     cout<<"Input username: "; cin>>username;
     cout<<"Input password: "; cin>>password;
     for(auto& l: listAccount)
@@ -193,7 +203,7 @@ bool bLogin(list<cAccount*> &listAccount)
         {
             cout<<"You don't have permission to login. \n";
             return false;
-        }
+        } 
     }
     return false;
 }
@@ -317,6 +327,7 @@ int main()
     vector<cRoom*> vecRooms;
     list<cClient*> listClients;
     list<cAccount*> listAccounts;
+    vector<cPaymentHistory*> vecPayments;
 
     bool bQuit= false;
     int n;
@@ -394,16 +405,16 @@ int main()
                 cout<<"Input room number: ";
                 int room_number;
                 cin>>room_number;
-                CheckOut(vecRooms, room_number);
+                CheckOut(vecRooms, room_number, vecPayments);
                 break;
             case 5: 
-                
                 break;
             case 6:
-
                 break;
             case 7:
-
+                break;
+            default:
+                cout<<"This feature is not available!\n";
                 break;
         }
     }
