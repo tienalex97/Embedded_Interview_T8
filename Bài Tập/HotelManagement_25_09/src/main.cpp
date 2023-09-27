@@ -4,8 +4,7 @@
 #include"cClient.h"
 #include"cAccount.h"
 
-
-//#include"cRoom.h"
+#include"cRoom.h"
 
 using namespace std;
 
@@ -29,7 +28,6 @@ void BookARoom(vector<cRoom*> &vec, list<cClient*> &listClient)
     cout<<"1. Setup number of rooms.\n";
     cout<<"2. Update room's status. \n";
     cout<<"3. Booking. \n";
-    cout<<"4. Check out.\n";
     cout<<"0. To back to main menu. \n";
     
     while(!bExit)
@@ -84,19 +82,22 @@ void BookARoom(vector<cRoom*> &vec, list<cClient*> &listClient)
 
                         // If client exist in listClient, update client.
                         // Otherwise, create new client.
+                        int check_client_exist=false;
                         for(auto&l : listClient)
                         {
                             if(l->GetClientSDT()==client_sdt)
                             {
                                 // Update client
+                                check_client_exist++;
                                 cout<<"Updated successfully!\n";
-                            }
-                            else 
-                            {
-                                cClient* new_client= new cClient(client_name, client_sdt, client_address);
-                                listClient.push_back(new_client);
-                                cout<<"Client's info has been successfully added to list clients."<<endl;
-                            }   
+                            } 
+                        }
+                        if(check_client_exist==0)
+                        {      
+                            cClient* new_client= new cClient(client_name, client_sdt, client_address);
+                            listClient.push_back(new_client);
+                            v->SetClient(new_client);
+                            cout<<"Client's info has been successfully added to list clients."<<endl;
                         }
                         // Once booked, set room status to not available.
                         cout<<"Booked successfully! \n";
@@ -117,6 +118,65 @@ void BookARoom(vector<cRoom*> &vec, list<cClient*> &listClient)
             cout<<"Input not found!\n";
         }
     }
+}
+void DisplayBill( cRoom* &room)
+{
+    cout<<"\t"<<"___BILL___"<<endl;
+    cout<<"Name: "<< "\t"<<room->GetClient()->GetClientName()<<endl;
+    cout<<"SDT: "<<"\t"<<room->GetClient()->GetClientSDT()<<endl;
+    cout<<"Address: "<<"\t"<<room->GetClient()->GetClientAddress()<<endl;
+    cout<<"Check in: "<<"\t"<<room->GetClient()->GetTimeCheckIn();
+    room->GetClient()->SetTimeCheckOut();
+    cout<<"Check out: "<<"\t"<<room->GetClient()->GetTimeCheckOut()<<endl;
+    cout<<"\t###"<<" Summary: "<< 1000 <<"$." <<endl;
+}
+void CheckOut( vector<cRoom*> &vec, const int room_number)
+{   
+    bool bCheckedOut= false;
+    while(!bCheckedOut)
+    {
+        int check_room_found=0;
+        for(auto &v: vec)
+        {
+            if(room_number==v->GetRoomNumber())
+            {
+                if(v->IsRoomAvailable()) 
+                {
+                    cout<<"This room have been already checked out! \n";
+                    return;
+                }
+                check_room_found++;
+                cout<<"Room"<<"\t"<<"Status"<<"\t"<<"Client"<<"\t"<<"SDT"<<endl;
+                cout<<room_number<<"\t"<<((v->IsRoomAvailable())? "V" : "X")
+                <<"\t"<<v->GetClient()->GetClientName()
+                <<"\t"<<v->GetClient()->GetClientSDT()<<endl;
+                cout<<"Are you sure want to check out? y/n: ";
+                string checkout_choice;
+                cin>>checkout_choice;
+                if(checkout_choice=="y"||checkout_choice=="yes")  
+                {
+                    DisplayBill(v);
+                    cout<<"Confirm payment: y/n: ";
+                    string confirm_payment;
+                    cin>>confirm_payment;
+                    if(confirm_payment=="y"||confirm_payment=="yes")
+                    {
+                        cout<<"Payment is processing\n";
+                        for(int i=0; i<20; i++) cout<<".";
+                        cout<<endl;
+                        v->UpdateRoomStatus(FREE);
+                        v->GetClient()->CheckOut();
+                        v->SetClient(nullptr);
+                        cout<<"Payment was successfully! Finished check out! \n";
+                        bCheckedOut= true;
+                    } else "Payment wasn't successfully! Try again!\n";
+                }
+                else cout<<"Check out unsuccesfully! Try again! \n";
+            }
+        }
+        if(check_room_found==0) cout<<"Room not found! \n";
+    }
+    
 }
 
 bool bLogin(list<cAccount*> &listAccount)
@@ -144,7 +204,7 @@ void DisplayClientInfo(list<cClient*> &listClient)
     cout<<"Name"<<"\t\t"<<"SDT"<<"\t\t\t"<<"Address"<<"\t\t"<<"History"<<endl;
     for(auto&l: listClient)
         cout<<l->GetClientName()<<"\t\t"<<l->GetClientSDT()<<"\t\t"
-        <<l->GetClientAddress()<<"\t\t"<<"..."<<endl;
+        <<l->GetClientAddress()<<"\t\t"<<l->GetTimeCheckIn()<<endl;
 
 }
 void UpdateClientInfo(cClient* &client)
@@ -248,6 +308,9 @@ void ClientManagement(list<cClient*> &listClient)
     }
 }
 
+
+
+
 int main()
 {   
     // Global variable
@@ -321,13 +384,17 @@ int main()
                         }
                         else cout<<"Username or password is incorrect! Try again!\n";
                 }
+                break;
                 
             case 3: 
                 cout<<"__________EMPLOYEE MANAGEMENT_________\n";
                 break;
             case 4: 
-                cout<<"__________CHECK OUT___________\n";
-                
+                cout<<"__________CHECK OUT___________\n"<<endl;
+                cout<<"Input room number: ";
+                int room_number;
+                cin>>room_number;
+                CheckOut(vecRooms, room_number);
                 break;
             case 5: 
                 

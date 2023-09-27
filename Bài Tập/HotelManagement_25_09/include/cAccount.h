@@ -1,3 +1,4 @@
+#pragma once
 #include<iostream>
 using namespace std;
 
@@ -21,7 +22,6 @@ class cAccount
         string GetUserName();
         string GetPassWord();
         int GetAuthorization();
-
         void SetAuthorization(int authorization);
 
 };
