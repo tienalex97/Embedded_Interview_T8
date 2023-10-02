@@ -3,9 +3,11 @@
 
 #include"cClient.h"
 #include"cAccount.h"
-
 #include"cRoom.h"
 #include"cPaymentHistory.h"
+#include"cRating.h"
+
+
 
 using namespace std;
 
@@ -136,7 +138,8 @@ void DisplayBill( cRoom* &room)
     cout<<"0. Return.\n";
     cout<<"######################\n";
 }
-void CheckOut( vector<cRoom*> &vec, const int room_number, vector<cPaymentHistory*> &vecPay)
+void CheckOut( vector<cRoom*> &vec, const int room_number,
+        vector<cRating*> &vecRate, vector<cPaymentHistory*> &vecPay)
 {   
     bool bCheckedOut= false;
     while(!bCheckedOut)
@@ -174,10 +177,20 @@ void CheckOut( vector<cRoom*> &vec, const int room_number, vector<cPaymentHistor
                         v->GetClient()->CheckOut();
                         cPaymentHistory* new_payment= new cPaymentHistory(v->GetClient(), v->GetClient()->GetTimeCheckOut(), 1000.0f);
                         vecPay.push_back(new_payment);
-
+                        cout<<"Payment was successfully! Finished check out! \n";
+                        
+                        // Rating.
+                        cout<<"Please give us some feed back! "<<endl;
+                        string comment;
+                        int rate;
+                        cout<<"Input your stars: (1-5) "; cin>>rate;
+                        cout<<"Leave a comment: "; cin>>comment;
+                        cRating* new_rate= new cRating(rate, comment, v->GetClient());      
+                        vecRate.push_back(new_rate);
+                        cout<<"Thanks for your rating! <3\n";
+                        
                         // Reset room state
                         v->SetClient(nullptr);
-                        cout<<"Payment was successfully! Finished check out! \n";
                         bCheckedOut= true;
                     } else "Payment wasn't successfully! Try again!\n";
                 }
@@ -429,7 +442,8 @@ int main()
     vector<cRoom*> vecRooms;
     list<cClient*> listClients;
     list<cAccount*> listAccounts;
-    vector<cPaymentHistory*> vecPayments;
+    vector<cPaymentHistory*> vecPayments; 
+    vector<cRating* > vecRates;
 
     bool bQuit= false;
     int n;
@@ -463,6 +477,12 @@ int main()
         cRoom* room = new cRoom(roomNumber);
         vecRooms.push_back(room);
     }
+
+    // Create some default rating
+    cRating* rate1= new cRating(5, "Tuyetvoi", new_client);
+    cRating* rate2= new cRating(4,"Nhucut", new_client1);
+    vecRates.push_back(rate1);
+    vecRates.push_back(rate2);
 
     // Main program=================================================
     cout<<"\t"<<"_______HOTEL MANGAGEMENT______"<<endl;
@@ -518,13 +538,23 @@ int main()
                 cout<<"[CHECK OUT]Input room number: ";
                 int room_number;
                 cin>>room_number;
-                CheckOut(vecRooms, room_number, vecPayments);
+                CheckOut(vecRooms, room_number, vecRates, vecPayments);
                 break;
             case 5: 
                 break;
             case 6:
                 break;
             case 7:
+                cout<<"\t___FEEDBACK & RATING___\n";
+                cout<<vecRates.size()<<endl;
+                cout<<"RATING"<<"\t"<<"Cient"<<"\t"<<"Comment"<<"\t"<<"Time"<<endl;
+                for(auto &v: vecRates)
+                {
+                    cout<<v->getClient()->GetClientName()<<"\t"<<v->getRate()<<"\t"<<
+                    v->getComment()<<"\t"<<v->getDateTime()<<endl;
+                    
+                }
+
                 break;
             default:
                 cout<<"This feature is not available!\n";
