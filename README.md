@@ -44,7 +44,9 @@ int tong(int c, int d){ //Hàm này có kiểu trả về là int
 }
 int main(){
     tich(2,3); // tich 2 va 3 la 6
-    printf("Tong c va d la %d",tong(4,5)); //Tong c va d la 9
+    int e = tong(4,5);
+    printf("tong c va d la %d", e); 
+    //printf("Tong c va d la %d",tong(4,5)); //Tong c va d la 9
     return 0;
 }
 ```
